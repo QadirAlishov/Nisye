@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NisiyəPanel</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F5F2;--surface:#FFF;--surface2:#F0F0EC;--surface3:#E8E8E4;
+  --border:#E2E2DC;--border2:#CACAC2;
+  --text:#18181A;--text2:#6B6B72;--text3:#A0A0A8;
+  --accent:#2563EB;--accent-bg:#EFF6FF;--accent-border:#BFDBFE;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-border:#FECACA;
+  --amber:#D97706;--amber-bg:#FFFBEB;--amber-border:#FDE68A;
+  --green:#16A34A;--green-bg:#F0FDF4;--green-border:#BBF7D0;
+  --r:8px;--r-lg:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+.hidden{display:none!important}
+.lw{min-height:100vh;display:flex;align-items:center;justify-content:center}
+.lcard{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2.25rem;width:380px;box-shadow:var(--shadow-md)}
+.llogo{display:flex;align-items:center;gap:12px;margin-bottom:2rem}
+.licon{width:42px;height:42px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff}
+.lname{font-size:18px;font-weight:700}
+.lsub{font-size:12px;color:var(--text3);margin-top:2px}
+.lfield{margin-bottom:12px}
+.lfield label{display:block;font-size:12px;color:var(--text2);font-weight:500;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.lfield input{width:100%;padding:10px 13px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:border .15s}
+.lfield input:focus{border-color:var(--accent)}
+.lbtn{width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-family:inherit;font-weight:600;cursor:pointer;margin-top:8px}
+.lbtn:disabled{opacity:.6;cursor:not-allowed}
+.lerr{margin-top:10px;padding:10px 13px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:var(--r);font-size:13px;color:var(--red)}
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:50;box-shadow:var(--shadow)}
+.tb-l{display:flex;align-items:center;gap:12px}
+.tb-icon{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
+.tb-name{font-size:15px;font-weight:600}
+.tb-r{display:flex;align-items:center;gap:10px}
+.tb-user{font-size:12px;color:var(--text3)}
+.btn-logout{padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text2);cursor:pointer;font-family:inherit}
+.badge{display:inline-flex;align-items:center;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;white-space:nowrap}
+.b-accent{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent-border)}
+.b-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.b-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.b-amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.b-gray{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 56px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:.875rem 0;position:sticky;top:56px;height:calc(100vh - 56px)}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 1rem;font-size:13px;color:var(--text2);cursor:pointer;transition:all .15s;margin:1px 7px;border-radius:8px;user-select:none}
+.ni:hover{background:var(--surface2);color:var(--text)}
+.ni.on{background:var(--accent-bg);color:var(--accent);font-weight:500}
+.ni-ic{font-size:14px;width:18px;text-align:center}
+.nsep{height:1px;background:var(--border);margin:7px 1rem}
+.content{padding:1.75rem;background:var(--bg)}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px}
+.pt{font-size:20px;font-weight:700}
+.ps{font-size:12px;color:var(--text3);margin-top:3px}
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1rem 1.25rem;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.stat-line{position:absolute;top:0;left:0;right:0;height:3px}
+.sv{font-size:26px;font-weight:700;font-family:'DM Mono',monospace;margin-bottom:3px;line-height:1}
+.sl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+.ch{padding:.875rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.ct{font-size:13px;font-weight:600}
+.search-wrap{position:relative}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
+.search-inp{padding:8px 12px 8px 34px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;font-family:inherit;color:var(--text);outline:none;background:var(--surface);width:200px}
+.search-inp:focus{border-color:var(--accent)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;color:var(--text3);padding:9px 14px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.06em;font-weight:600;background:var(--surface2)}
+td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFAF8}
+td strong{color:var(--text);font-weight:600}
+.empty-td{text-align:center;padding:3rem!important;color:var(--text3)!important}
+.btn{padding:8px 16px;border-radius:var(--r);font-size:13px;font-family:inherit;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-sm{padding:5px 10px;border:1px solid var(--border);background:var(--surface);color:var(--text2);border-radius:6px;font-size:11px;font-family:inherit;font-weight:500;cursor:pointer;white-space:nowrap}
+.btn-wa{background:#16A34A;color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-family:inherit;font-weight:600;cursor:pointer}
+.btn-paid{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
+.btn-del{color:var(--red);border-color:var(--red-border)}
+.btn-amber{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-border)}
+.frow{display:flex;gap:6px;flex-wrap:wrap}
+.fil{padding:6px 14px;border-radius:20px;font-size:12px;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;font-family:inherit;font-weight:500}
+.fil.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.store-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sgcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;box-shadow:var(--shadow)}
+.sgc-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sgc-av{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
+.sgc-name{font-size:14px;font-weight:600;color:var(--text)}
+.sgc-mail{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.sgc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px}
+.ss{background:var(--surface2);border-radius:7px;padding:6px 8px;text-align:center}
+.ssv{font-size:15px;font-weight:700;font-family:'DM Mono',monospace;color:var(--text)}
+.ssl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+.sgc-foot{display:flex;align-items:center;gap:10px}
+.pbar-wrap{flex:1}
+.pbar-lbl{font-size:11px;color:var(--text3);margin-bottom:4px}
+.pbar-bg{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:3px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--r-lg);padding:2rem;width:440px;max-width:100%;box-shadow:var(--shadow-md);animation:su .2s ease;max-height:90vh;overflow-y:auto}
+.modal-sm{width:360px}
+@keyframes su{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.mt{font-size:16px;font-weight:700}
+.btn-x{background:none;border:none;cursor:pointer;color:var(--text3);font-size:24px;line-height:1;padding:0 4px}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.fl{font-size:12px;color:var(--text2);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.fi{padding:10px 13px;border:1px solid var(--border);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--text);outline:none;width:100%;background:var(--surface)}
+.fi:focus{border-color:var(--accent)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mbtns{display:flex;gap:10px;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+.btn-cancel{flex:1;padding:11px;border:1px solid var(--border);border-radius:var(--r);font-size:14px;background:var(--surface);color:var(--text2);cursor:pointer;font-family:inherit}
+.btn-save{flex:2;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-size:14px;cursor:pointer;font-family:inherit;font-weight:600}
+.btn-save:disabled{opacity:.6;cursor:not-allowed}
+.notif-banner{background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:var(--r-lg);padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:12px}
+.notif-icon{font-size:20px;flex-shrink:0}
+.notif-title{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:4px}
+.notif-body{font-size:12px;color:var(--text2);line-height:1.6}
+.partial-sub{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;display:block;margin-top:3px}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:11px 18px;border-radius:var(--r);font-size:13px;font-weight:500;color:#fff;z-index:999;transform:translateY(20px);opacity:0;transition:all .2s;pointer-events:none;box-shadow:var(--shadow-md)}
+.toast.show{transform:translateY(0);opacity:1}
+.t-ok{background:var(--green)}
+.t-err{background:var(--red)}
+.t-info{background:var(--accent)}
+.loading{display:flex;align-items:center;justify-content:center;padding:4rem;color:var(--text3);gap:10px}
+.spin{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ndot{width:7px;height:7px;background:var(--red);border-radius:50%;display:inline-block;margin-left:5px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .sgrid{grid-template-columns:1fr 1fr}
+  .store-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="pg-login">
+<div class="lw">
+  <div class="lcard">
+    <div class="llogo">
+      <div class="licon">N</div>
+      <div><div class="lname">NisiyəPanel</div><div class="lsub">nisiyepanel.com</div></div>
+    </div>
+    <div class="lfield">
+      <label>E-mail</label>
+      <input type="email" id="l-email" placeholder="email@mail.com" onkeydown="if(event.key==='Enter')window.doLogin()">
+    </div>
+    <div class="lfield">
+      <label>Şifrə</label>
+      <input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')window.doLogin()">
+    </div>
+    <button class="lbtn" id="l-btn" onclick="window.doLogin()">Daxil ol →</button>
+    <div class="lerr hidden" id="l-err"></div>
+  </div>
+</div>
+</div>
+
+<!-- ADMIN -->
+<div id="pg-admin" class="hidden">
+<div class="topbar">
+  <div class="tb-l">
+    <div class="tb-icon">N</div>
+    <span class="tb-name">NisiyəPanel</span>
+    <span class="badge b-accent">Admin</span>
+  </div>
+  <div class="tb-r">
+    <span class="tb-user" id="admin-email-lbl"></span>
+    <button class="btn-logout" onclick="window.doLogout()">Çıxış</button>
+  </div>
+</div>
+<div class="layout">
+  <div class="sidebar">
+    <div class="ni on" onclick="window.aNav(this,'dash')"><span class="ni-ic">◈</span>Dashboard</div>
+    <div class="ni" onclick="window.aNav(this,'stores')"><span class="ni-ic">◻</span>Mağazalar</div>
+    <div class="ni" onclick="window.aNav(this,'abune')"><span class="ni-ic">◷</span>Abunələr<span class="ndot hidden" id="a-dot"></span></div>
+  </div>
+  <div class="content" id="a-content"><div class="loading"><div class="spin"></div>Yüklənir...</div></div>
+</div>
+</div>
+
+<!-- STORE -->
+<div id="pg-store" class="hidden">
+<div class="topbar">
+  <div class="tb-l">
+    <div class="tb-icon" id="s-icon">M</div>
+    <span class="tb-name" id="s-name">Mağaza</span>
+    <span class="badge b-green" id="s-plan">Plan</span>
+  </div>
+  <div class="tb-r">
+    <span class="tb-user" id="s-email"></span>
+    <button class="btn-logout" onclick="window.doLogout()">Çıxış</button>
+  </div>
+</div>
+<div class="layout">
+  <div class="sidebar">
+    <div class="ni on" onclick="window.sNav(this,'panel')"><span class="ni-ic">◈</span>Nisiyə paneli</div>
+    <div class="nsep"></div>
+    <div class="ni" style="opacity:.35;cursor:default"><span class="ni-ic">⚙</span>Hesab</div>
+  </div>
+  <div class="content" id="s-content"><div class="loading"><div class="spin"></div>Yüklənir...</div></div>
+</div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="m-borc">
+  <div class="modal">
+    <div class="mh"><p class="mt" id="m-borc-title">Yeni borc</p><button class="btn-x" onclick="window.closeM('m-borc')">×</button></div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">Ad</label><input class="fi" id="b-ad" placeholder="Elvin"></div>
+      <div class="fg"><label class="fl">Soyad</label><input class="fi" id="b-soyad" placeholder="Məmmədov"></div>
+    </div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">WhatsApp nömrəsi</label><input class="fi" id="b-nomre" placeholder="994501234567"></div>
+      <div class="fg"><label class="fl">Borc (₼)</label><input class="fi" type="number" id="b-borc" placeholder="150" min="1"></div>
+    </div>
+    <div class="fg"><label class="fl">Son ödəniş tarixi</label><input class="fi" type="date" id="b-tarix"></div>
+    <div class="fg"><label class="fl">Qeyd (istəyə görə)</label><input class="fi" id="b-qeyd" placeholder="Sement, kafel..."></div>
+    <div class="mbtns">
+      <button class="btn-cancel" onclick="window.closeM('m-borc')">Ləğv et</button>
+      <button class="btn-save" id="b-save" onclick="window.saveBorc()">Əlavə et</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="m-qismen">
+  <div class="modal modal-sm">
+    <div class="mh"><p class="mt" id="q-title">Qismən ödəniş</p><button class="btn-x" onclick="window.closeM('m-qismen')">×</button></div>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:1rem" id="q-info"></p>
+    <div class="fg"><label class="fl" id="q-label">Məbləğ (₼)</label><input class="fi" type="number" id="q-amount" placeholder="50" min="1"></div>
+    <div class="mbtns" style="padding-top:.875rem">
+      <button class="btn-cancel" onclick="window.closeM('m-qismen')">Ləğv et</button>
+      <button class="btn-save" onclick="window.saveQismen()">Tətbiq et</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="m-magaza">
+  <div class="modal">
+    <div class="mh"><p class="mt">Yeni mağaza</p><button class="btn-x" onclick="window.closeM('m-magaza')">×</button></div>
+    <div class="fg"><label class="fl">Mağaza adı</label><input class="fi" id="mm-ad" placeholder="Ulduz İnşaat"></div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">E-mail</label><input class="fi" id="mm-email" type="email" placeholder="magaza@mail.com"></div>
+      <div class="fg"><label class="fl">Şifrə</label><input class="fi" id="mm-sifre" type="password" placeholder="Min 6 simvol"></div>
+    </div>
+    <div class="fgrid">
+      <div class="fg">
+        <label class="fl">Plan</label>
+        <select class="fi" id="mm-plan">
+          <option value="starter">Starter — 15 ₼/ay</option>
+          <option value="pro">Pro — 30 ₼/ay</option>
+          <option value="business">Business — 60 ₼/ay</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Abunə bitis</label><input class="fi" type="date" id="mm-tarix"></div>
+    </div>
+    <div class="mbtns">
+      <button class="btn-cancel" onclick="window.closeM('m-magaza')">Ləğv et</button>
+      <button class="btn-save" id="mm-save" onclick="window.saveMagaza()">Əlavə et</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const SB_URL = 'https://fasrsgovvwocynqfmboo.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhc3JzZ292dndvY3lucWZtYm9vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1Njc4NTQsImV4cCI6MjA5MzE0Mzg1NH0.t886Yt2mGk0t3gWaBkH8xUKMRI-FOTwF-pXcip8l9Ls';
+const ADMIN  = 'admin@mail.ru';
+const COLORS = ['#059669','#6366F1','#F59E0B','#EC4899','#0EA5E9','#8B5CF6'];
+const PLAN_PRICE = {starter:15,pro:30,business:60};
+
+const sb = createClient(SB_URL, SB_KEY, {
+  auth:{ persistSession:true, autoRefreshToken:true, storageKey:'nisiye_auth' }
+});
+
+let user=null,magaza=null,nisiye=[],fil='all',search='',editId=null,qismenId=null,qismenMode='pay',toastT=null,aPage='dash',sPage='panel';
+
+sb.auth.onAuthStateChange(async(event,session)=>{
+  if(session?.user){
+    user=session.user;
+    if(user.email===ADMIN){
+      show('pg-admin');
+      document.getElementById('admin-email-lbl').textContent=user.email;
+      loadAdminDash();
+    } else {
+      const ok=await loadMagaza();
+      if(ok){show('pg-store');}
+      else{await sb.auth.signOut();show('pg-login');showErr('Bu email ilə mağaza tapılmadı!');}
+    }
+  } else {
+    user=null;magaza=null;nisiye=[];
+    show('pg-login');
+  }
+});
+
+window.doLogin=async function(){
+  const email=document.getElementById('l-email').value.trim();
+  const pass=document.getElementById('l-pass').value;
+  if(!email||!pass){showErr('E-mail və şifrə daxil edin');return;}
+  const btn=document.getElementById('l-btn');
+  btn.disabled=true;btn.textContent='Gözləyin...';
+  document.getElementById('l-err').classList.add('hidden');
+  const{error}=await sb.auth.signInWithPassword({email,password:pass});
+  btn.disabled=false;btn.textContent='Daxil ol →';
+  if(error)showErr('E-mail və ya şifrə yanlışdır');
+}
+
+window.doLogout=async function(){await sb.auth.signOut();}
+
+function showErr(msg){
+  const el=document.getElementById('l-err');
+  el.textContent=msg;el.classList.remove('hidden');
+}
+
+function show(id){
+  ['pg-login','pg-admin','pg-store'].forEach(p=>
+    document.getElementById(p).classList.toggle('hidden',p!==id)
+  );
+}
+
+async function loadMagaza(){
+  try{
+    const{data}=await sb.from('magazalar').select('*').eq('email',user.email).maybeSingle();
+    if(!data)return false;
+    magaza=data;
+    const col=COLORS[Math.abs(data.ad.charCodeAt(0))%COLORS.length];
+    const icon=document.getElementById('s-icon');
+    icon.textContent=data.ad[0];icon.style.background=col;
+    document.getElementById('s-name').textContent=data.ad;
+    document.getElementById('s-email').textContent=user.email;
+    document.getElementById('s-plan').textContent=data.plan.charAt(0).toUpperCase()+data.plan.slice(1)+' plan';
+    await loadNisiye();
+    return true;
+  }catch(e){console.error(e);return false;}
+}
+
+async function loadNisiye(){
+  const{data}=await sb.from('nisiye').select('*').eq('magaza_id',magaza.id).order('yaradildi',{ascending:false});
+  nisiye=data||[];
+  renderStore();
+}
+
+function qaliq(r){return r.borc-(r.odenilen||0);}
+
+function calcStatus(r){
+  if(r.status==='paid')return 'paid';
+  if(!r.tarix)return 'normal';
+  const today=new Date();today.setHours(0,0,0,0);
+  const diff=Math.round((new Date(r.tarix)-today)/864e5);
+  if(diff<0)return 'late';
+  if(diff<=7)return 'week';
+  return 'normal';
+}
+
+function fmtDate(s){
+  if(!s)return '—';
+  const d=new Date(s);
+  return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+}
+
+function sBadge(r){
+  const s=calcStatus(r);
+  if(s==='paid')  return '<span class="badge b-green">Ödənildi ✓</span>';
+  if(s==='late')  return '<span class="badge b-red">Gecikmiş</span>';
+  if(s==='week'){
+    const today=new Date();today.setHours(0,0,0,0);
+    const diff=Math.round((new Date(r.tarix)-today)/864e5);
+    if(diff===0)return '<span class="badge b-amber">Bu gün</span>';
+    if(diff===1)return '<span class="badge b-amber">Sabah</span>';
+    return `<span class="badge b-amber">${diff} gün qaldı</span>`;
+  }
+  return '<span class="badge b-gray">Normal</span>';
+}
+
+window.sNav=function(el,page){
+  document.querySelectorAll('#pg-store .ni').forEach(n=>n.classList.remove('on'));
+  el.classList.add('on');sPage=page;
+  renderStore();
+}
+
+function renderStore(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const wkEnd=new Date(today);wkEnd.setDate(wkEnd.getDate()+7);
+  const aktiv=nisiye.filter(r=>calcStatus(r)!=='paid');
+  const toplam=aktiv.reduce((s,r)=>s+qaliq(r),0);
+  const gecik=aktiv.filter(r=>calcStatus(r)==='late').length;
+  const paid=nisiye.filter(r=>calcStatus(r)==='paid').length;
+  const week=aktiv.filter(r=>{const d=new Date(r.tarix);return d>=today&&d<=wkEnd;}).length;
+  const bugun=aktiv.filter(r=>{
+    if(!r.tarix)return false;
+    const d=new Date(r.tarix);d.setHours(0,0,0,0);
+    return d.getTime()===today.getTime();
+  });
+  const q=search.toLowerCase();
+  const rows=nisiye.filter(r=>{
+    const s=calcStatus(r);
+    let show=true;
+    if(fil==='late')show=s==='late';
+    else if(fil==='week')show=s==='week'||s==='late';
+    else if(fil==='today')show=s!=='paid'&&r.tarix&&new Date(r.tarix).setHours(0,0,0,0)===today.getTime();
+    else if(fil==='paid')show=s==='paid';
+    if(q)show=show&&r.ad.toLowerCase().includes(q);
+    return show;
+  });
+
+  let bannerHtml='';
+  if(bugun.length>0){
+    bannerHtml=`<div class="notif-banner">
+      <div class="notif-icon">🔔</div>
+      <div><div class="notif-title">Bu gün ${bugun.length} ödəniş var!</div>
+      <div class="notif-body">${bugun.map(r=>`<strong>${r.ad}</strong> — ${qaliq(r)} ₼`).join(' · ')}</div></div>
+    </div>`;
+  } else if(gecik>0){
+    bannerHtml=`<div class="notif-banner" style="background:var(--red-bg);border-color:var(--red-border)">
+      <div class="notif-icon">⚠️</div>
+      <div><div class="notif-title" style="color:var(--red)">${gecik} gecikmiş ödəniş!</div>
+      <div class="notif-body">${aktiv.filter(r=>calcStatus(r)==='late').map(r=>`<strong>${r.ad}</strong> — ${qaliq(r)} ₼`).join(' · ')}</div></div>
+    </div>`;
+  }
+
+  setC('s-content',`
+    <div class="ph">
+      <div><p class="pt">Nisiyə paneli</p><p class="ps">${magaza.ad}</p></div>
+      <button class="btn btn-primary" onclick="window.openBorc()">+ Yeni borc</button>
+    </div>
+    ${bannerHtml}
+    <div class="sgrid">
+      <div class="stat"><div class="stat-line" style="background:var(--red)"></div><p class="sv" style="color:var(--red)">${toplam} ₼</p><p class="sl">Ümumi nisiyə</p></div>
+      <div class="stat"><div class="stat-line" style="background:var(--accent)"></div><p class="sv">${aktiv.length}</p><p class="sl">Aktiv borclu</p></div>
+      <div class="stat"><div class="stat-line" style="background:var(--amber)"></div><p class="sv" style="color:var(--amber)">${week}</p><p class="sl">Bu həftə</p></div>
+      <div class="stat"><div class="stat-line" style="background:var(--red)"></div><p class="sv" style="color:var(--red)">${gecik}</p><p class="sl">Gecikmiş</p></div>
+    </div>
+    <div class="card">
+      <div class="ch">
+        <div class="frow">
+          <button class="fil ${fil==='all'?'on':''}"   onclick="window.setFil('all')">Hamısı (${nisiye.length})</button>
+          <button class="fil ${fil==='today'?'on':''}" onclick="window.setFil('today')">Bu gün (${bugun.length})</button>
+          <button class="fil ${fil==='late'?'on':''}"  onclick="window.setFil('late')">Gecikmiş (${gecik})</button>
+          <button class="fil ${fil==='week'?'on':''}"  onclick="window.setFil('week')">Bu həftə (${week})</button>
+          <button class="fil ${fil==='paid'?'on':''}"  onclick="window.setFil('paid')">Ödənilmiş (${paid})</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="search-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-inp" placeholder="Ad axtar..." value="${search}" oninput="window.setSearch(this.value)">
+          </div>
+          <button class="btn-sm" onclick="window.bulkWA()">📱 Toplu WA</button>
+          <button class="btn-sm" onclick="window.exportCSV()">📥 CSV</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr>
+          <th>Ad soyad</th><th>Nömrə</th><th>Borc/Qalıq</th>
+          <th>Son tarix</th><th>Status</th><th>Əməliyyat</th>
+        </tr></thead>
+        <tbody>${rows.length?rows.map(r=>{
+          const s=calcStatus(r);const q2=qaliq(r);
+          const ac=s==='late'?'var(--red)':s==='week'?'var(--amber)':'var(--text)';
+          const dc=s==='late'?'var(--red)':s==='week'?'var(--amber)':'var(--text3)';
+          const ps=r.odenilen>0&&s!=='paid'?`<span class="partial-sub">${r.odenilen}₼ ödənilib · qalıq: ${q2}₼</span>`:'';
+          return `<tr>
+            <td><strong>${r.ad}</strong>${r.qeyd?`<span style="font-size:11px;color:var(--text3);display:block">${r.qeyd}</span>`:''}</td>
+            <td style="font-family:'DM Mono',monospace;font-size:12px">+${r.nomre}</td>
+            <td><strong style="color:${ac};font-family:'DM Mono',monospace">${q2} ₼</strong>${ps}</td>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:${dc}">${fmtDate(r.tarix)}</td>
+            <td>${sBadge(r)}</td>
+            <td><div style="display:flex;gap:4px;flex-wrap:wrap">
+              ${s!=='paid'?`<button class="btn-wa" onclick="window.sendWA('${r.id}')">📱 WA</button>`:''}
+              ${s!=='paid'?`<button class="btn-sm btn-paid" onclick="window.markPaid('${r.id}')">Ödədi ✓</button>`:''}
+              ${s!=='paid'?`<button class="btn-sm" onclick="window.openQismen('${r.id}','pay')">Qismən</button>`:''}
+              ${s!=='paid'?`<button class="btn-sm btn-amber" onclick="window.openQismen('${r.id}','add')">+ Borc</button>`:''}
+              <button class="btn-sm" onclick="window.openBorc('${r.id}')">✎</button>
+              <button class="btn-sm btn-del" onclick="window.delBorc('${r.id}')">Sil</button>
+            </div></td>
+          </tr>`;
+        }).join(''):`<tr><td colspan="6" class="empty-td">Heç bir qeyd tapılmadı</td></tr>`}</tbody>
+      </table>
+    </div>`);
+}
+
+window.setFil=function(f){fil=f;renderStore();}
+window.setSearch=function(v){search=v;renderStore();}
+
+window.sendWA=function(id){
+  const r=nisiye.find(x=>x.id===id);if(!r)return;
+  const ad=r.ad.split(' ')[0];
+  let msg=`Salam hörmətli müştəri ${ad}\n\n${magaza.ad} xatırlatması:\nQalıq borc: ${qaliq(r)} AZN\nSon ödəniş tarixi: ${fmtDate(r.tarix)}`;
+  if(r.qeyd)msg+=`\nMəhsul: ${r.qeyd}`;
+  msg+=`\n\nZəhmət olmasa nəzərə alın\nHörmətlə, ${magaza.ad}`;
+  const a=document.createElement('a');
+  a.href=`https://wa.me/${r.nomre}?text=${encodeURIComponent(msg)}`;
+  a.target='_blank';a.rel='noopener';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  toast('WA göndərildi','ok');
+}
+
+window.bulkWA=function(){
+  const late=nisiye.filter(r=>calcStatus(r)==='late');
+  if(!late.length){toast('Gecikmiş borclu yoxdur','info');return;}
+  late.forEach((r,i)=>setTimeout(()=>window.sendWA(r.id),i*700));
+  toast(`${late.length} nəfərə WA göndərilir...`,'ok');
+}
+
+window.exportCSV=function(){
+  const header='Ad Soyad,Nomre,Borc,Odenilen,Galiq,Son tarix,Qeyd,Status\n';
+  const rows=nisiye.map(r=>`"${r.ad}","${r.nomre}",${r.borc},${r.odenilen||0},${qaliq(r)},"${fmtDate(r.tarix)}","${r.qeyd||''}","${calcStatus(r)}"`).join('\n');
+  const blob=new Blob(['\uFEFF'+header+rows],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`nisiye_${magaza.ad}.csv`;
+  a.click();
+  toast('CSV yükləndi','ok');
+}
+
+window.openBorc=function(id){
+  editId=id||null;
+  document.getElementById('m-borc-title').textContent=editId?'Borcu düzəliş et':'Yeni borc';
+  document.getElementById('b-save').textContent=editId?'Yadda saxla':'Əlavə et';
+  if(editId){
+    const r=nisiye.find(x=>x.id===editId);
+    const parts=r.ad.split(' ');
+    document.getElementById('b-ad').value=parts.slice(0,-1).join(' ')||r.ad;
+    document.getElementById('b-soyad').value=parts.length>1?parts[parts.length-1]:'';
+    document.getElementById('b-nomre').value=r.nomre;
+    document.getElementById('b-borc').value=r.borc;
+    document.getElementById('b-tarix').value=r.tarix||'';
+    document.getElementById('b-qeyd').value=r.qeyd||'';
+  } else {
+    ['b-ad','b-soyad','b-nomre','b-borc','b-tarix','b-qeyd'].forEach(i=>document.getElementById(i).value='');
+  }
+  openM('m-borc');
+}
+
+window.saveBorc=async function(){
+  const ad=document.getElementById('b-ad').value.trim();
+  const soyad=document.getElementById('b-soyad').value.trim();
+  const nomre=document.getElementById('b-nomre').value.trim().replace(/\D/g,'');
+  const borc=parseFloat(document.getElementById('b-borc').value);
+  const tarix=document.getElementById('b-tarix').value||null;
+  const qeyd=document.getElementById('b-qeyd').value.trim();
+  if(!ad||!nomre||!borc||borc<=0){toast('Ad, nömrə və borc lazımdır!','err');return;}
+  const fullName=soyad?`${ad} ${soyad}`:ad;
+  const btn=document.getElementById('b-save');
+  btn.disabled=true;btn.textContent='Saxlanır...';
+  let error;
+  if(editId){
+    ({error}=await sb.from('nisiye').update({ad:fullName,nomre,borc,tarix,qeyd}).eq('id',editId));
+  } else {
+    ({error}=await sb.from('nisiye').insert({magaza_id:magaza.id,ad:fullName,nomre,borc,odenilen:0,tarix,qeyd,status:'normal'}));
+  }
+  btn.disabled=false;btn.textContent=editId?'Yadda saxla':'Əlavə et';
+  if(error){toast('Xəta: '+error.message,'err');return;}
+  toast(editId?'Dəyişiklik saxlandı':`${fullName} əlavə edildi`,'ok');
+  closeM('m-borc');
+  await loadNisiye();
+}
+
+window.markPaid=async function(id){
+  const r=nisiye.find(x=>x.id===id);if(!r)return;
+  const{error}=await sb.from('nisiye').update({status:'paid',odenilen:r.borc}).eq('id',id);
+  if(error){toast('Xəta','err');return;}
+  toast(`${r.ad} — ödəniş qeydə alındı`,'ok');
+  await loadNisiye();
+}
+
+window.openQismen=function(id,mode){
+  qismenId=id;qismenMode=mode;
+  const r=nisiye.find(x=>x.id===id);
+  if(mode==='pay'){
+    document.getElementById('q-title').textContent='Qismən ödəniş';
+    document.getElementById('q-label').textContent='Ödənilən məbləğ (₼)';
+    document.getElementById('q-info').textContent=`${r.ad} — borc: ${r.borc} ₼, qalıq: ${qaliq(r)} ₼`;
+  } else {
+    document.getElementById('q-title').textContent='Borca əlavə et';
+    document.getElementById('q-label').textContent='Əlavə məbləğ (₼)';
+    document.getElementById('q-info').textContent=`${r.ad} — mövcud borc: ${r.borc} ₼`;
+  }
+  document.getElementById('q-amount').value='';
+  openM('m-qismen');
+}
+
+window.saveQismen=async function(){
+  const r=nisiye.find(x=>x.id===qismenId);
+  const amount=parseFloat(document.getElementById('q-amount').value);
+  if(!r||!amount||amount<=0){toast('Düzgün məbləğ daxil edin','err');return;}
+  let error;
+  if(qismenMode==='pay'){
+    const newOd=Math.min((r.odenilen||0)+amount,r.borc);
+    const newSt=newOd>=r.borc?'paid':r.status;
+    ({error}=await sb.from('nisiye').update({odenilen:newOd,status:newSt}).eq('id',qismenId));
+    if(!error)toast(newOd>=r.borc?`${r.ad} — tam ödəndi!`:`${amount} ₼ qeydə alındı`,'ok');
+  } else {
+    ({error}=await sb.from('nisiye').update({borc:r.borc+amount}).eq('id',qismenId));
+    if(!error)toast(`${r.ad} borcuna ${amount} ₼ əlavə edildi`,'ok');
+  }
+  if(error){toast('Xəta','err');return;}
+  closeM('m-qismen');
+  await loadNisiye();
+}
+
+window.delBorc=async function(id){
+  const r=nisiye.find(x=>x.id===id);
+  if(!r||!confirm(`"${r.ad}" silinsin?`))return;
+  const{error}=await sb.from('nisiye').delete().eq('id',id);
+  if(error){toast('Xəta','err');return;}
+  toast('Qeyd silindi','info');
+  await loadNisiye();
+}
+
+window.aNav=function(el,page){
+  document.querySelectorAll('#pg-admin .ni').forEach(n=>n.classList.remove('on'));
+  el.classList.add('on');aPage=page;
+  if(page==='dash')loadAdminDash();
+  if(page==='stores')loadAdminStores();
+  if(page==='abune')loadAdminAbune();
+}
+
+async function loadAdminDash(){
+  setC('a-content','<div class="loading"><div class="spin"></div>Yüklənir...</div>');
+  const[{data:stores},{data:nis}]=await Promise.all([sb.from('magazalar').select('*'),sb.from('nisiye').select('*')]);
+  const today=new Date();today.setHours(0,0,0,0);
+  const st=stores||[];const ni=nis||[];
+  const biten=st.filter(s=>s.abune_bitis&&Math.round((new Date(s.abune_bitis)-today)/864e5)<=5).length;
+  const gecik=ni.filter(r=>r.status!=='paid'&&r.tarix&&new Date(r.tarix)<today).length;
+  const toplam=ni.filter(r=>r.status!=='paid').reduce((s,r)=>s+(r.borc-(r.odenilen||0)),0);
+  if(biten>0)document.getElementById('a-dot').classList.remove('hidden');
+  setC('a-content',`
+    <div class="ph"><div><p class="pt">Dashboard</p><p class="ps">Bütün mağazalara ümumi baxış</p></div></div>
+    <div class="sgrid">
+      <div class="stat"><p class="sv">${st.length}</p><p class="sl">Ümumi mağaza</p></div>
+      <div class="stat"><p class="sv" style="color:var(--amber)">${biten}</p><p class="sl">Abunə bitmək üzrədir</p></div>
+      <div class="stat"><p class="sv" style="color:var(--red)">${gecik}</p><p class="sl">Gecikmiş nisiyə</p></div>
+      <div class="stat"><p class="sv" style="color:var(--green)">${toplam} ₼</p><p class="sl">Ümumi nisiyə</p></div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct">Mağazalar</span><button class="btn btn-primary" onclick="window.openM('m-magaza')">+ Yeni mağaza</button></div>
+      <table>
+        <thead><tr><th>Mağaza</th><th>Plan</th><th>Borclu</th><th>Abunə bitis</th><th>Status</th><th></th></tr></thead>
+        <tbody>${st.length?st.map(s=>{
+          const diff=s.abune_bitis?Math.round((new Date(s.abune_bitis)-today)/864e5):999;
+          const badge=!s.aktiv?'<span class="badge b-red">Blok</span>':diff<0?'<span class="badge b-red">Bitdi</span>':diff<=5?'<span class="badge b-amber">Tezliklə</span>':'<span class="badge b-green">Aktiv</span>';
+          const sNi=ni.filter(n=>n.magaza_id===s.id&&n.status!=='paid');
+          return `<tr>
+            <td><strong>${s.ad}</strong><span style="display:block;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">${s.email}</span></td>
+            <td><span class="badge b-gray">${s.plan}</span></td>
+            <td style="font-family:'DM Mono',monospace">${sNi.length}</td>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:${diff<=5?'var(--red)':'var(--text3)'}">${fmtDate(s.abune_bitis)}</td>
+            <td>${badge}</td>
+            <td><button class="btn-sm ${s.aktiv?'btn-del':'btn-paid'}" onclick="window.toggleStore('${s.id}',${s.aktiv})">${s.aktiv?'Blok':'Aktiv et'}</button></td>
+          </tr>`;
+        }).join(''):'<tr><td colspan="6" class="empty-td">Hələ mağaza yoxdur</td></tr>'}</tbody>
+      </table>
+    </div>`);
+}
+
+async function loadAdminStores(){
+  setC('a-content','<div class="loading"><div class="spin"></div>Yüklənir...</div>');
+  const[{data:stores},{data:nis}]=await Promise.all([sb.from('magazalar').select('*'),sb.from('nisiye').select('*')]);
+  const today=new Date();today.setHours(0,0,0,0);
+  const st=stores||[];const ni=nis||[];
+  setC('a-content',`
+    <div class="ph">
+      <div><p class="pt">Mağazalar</p><p class="ps">${st.length} mağaza</p></div>
+      <button class="btn btn-primary" onclick="window.openM('m-magaza')">+ Yeni mağaza</button>
+    </div>
+    <div class="store-grid">${st.map(s=>{
+      const diff=s.abune_bitis?Math.round((new Date(s.abune_bitis)-today)/864e5):999;
+      const pct=Math.max(0,Math.min(100,Math.round(diff/30*100)));
+      const bc=diff<0?'var(--red)':diff<=5?'var(--amber)':'var(--green)';
+      const badge=!s.aktiv?'<span class="badge b-red">Blok</span>':diff<0?'<span class="badge b-red">Bitdi</span>':diff<=5?'<span class="badge b-amber">Tezliklə</span>':'<span class="badge b-green">Aktiv</span>';
+      const sNi=ni.filter(n=>n.magaza_id===s.id);
+      const aktN=sNi.filter(n=>n.status!=='paid');
+      const gecN=aktN.filter(n=>n.tarix&&new Date(n.tarix)<today);
+      const topN=aktN.reduce((sum,n)=>sum+(n.borc-(n.odenilen||0)),0);
+      const col=COLORS[Math.abs(s.ad.charCodeAt(0))%COLORS.length];
+      return `<div class="sgcard">
+        <div class="sgc-head">
+          <div class="sgc-av" style="background:${col}">${s.ad[0]}</div>
+          <div><div class="sgc-name">${s.ad}</div><div class="sgc-mail">${s.email}</div></div>
+          <div style="margin-left:auto">${badge}</div>
+        </div>
+        <div class="sgc-stats">
+          <div class="ss"><p class="ssv">${aktN.length}</p><p class="ssl">Borclu</p></div>
+          <div class="ss"><p class="ssv" style="color:var(--red)">${gecN.length}</p><p class="ssl">Gecikmiş</p></div>
+          <div class="ss"><p class="ssv">${topN}₼</p><p class="ssl">Toplam</p></div>
+        </div>
+        <div class="sgc-foot">
+          <div class="pbar-wrap">
+            <div class="pbar-lbl">${s.plan} · ${diff>0?diff+' gün qaldı':'Bitib'}</div>
+            <div class="pbar-bg"><div class="pbar-fill" style="width:${pct}%;background:${bc}"></div></div>
+          </div>
+          <button class="btn-sm ${s.aktiv?'btn-del':'btn-paid'}" onclick="window.toggleStore('${s.id}',${s.aktiv})">${s.aktiv?'Blok':'Aktiv et'}</button>
+        </div>
+      </div>`;
+    }).join('')}</div>`);
+}
+
+async function loadAdminAbune(){
+  setC('a-content','<div class="loading"><div class="spin"></div>Yüklənir...</div>');
+  const{data:stores}=await sb.from('magazalar').select('*').order('abune_bitis');
+  const today=new Date();today.setHours(0,0,0,0);
+  const st=stores||[];
+  setC('a-content',`
+    <div class="ph"><div><p class="pt">Abunə idarəetməsi</p><p class="ps">Ödəniş tarixlərini izlə</p></div></div>
+    <div class="card">
+      <div class="ch"><span class="ct">Abunə vəziyyəti</span></div>
+      <table>
+        <thead><tr><th>Mağaza</th><th>Plan</th><th>Abunə bitis</th><th>Məbləğ</th><th>Vəziyyət</th><th></th></tr></thead>
+        <tbody>${st.map(s=>{
+          const diff=s.abune_bitis?Math.round((new Date(s.abune_bitis)-today)/864e5):999;
+          const price=PLAN_PRICE[s.plan]||15;
+          const badge=diff<0?'<span class="badge b-red">Ödənməyib ⚠</span>':diff<=5?`<span class="badge b-amber">${diff} gün qaldı</span>`:'<span class="badge b-green">Aktiv ✓</span>';
+          return `<tr>
+            <td><strong>${s.ad}</strong></td>
+            <td><span class="badge b-gray">${s.plan}</span></td>
+            <td style="font-family:'DM Mono',monospace;font-size:12px;color:${diff<=0?'var(--red)':diff<=5?'var(--amber)':'var(--text3)'}">${fmtDate(s.abune_bitis)}</td>
+            <td><strong>${price} ₼</strong></td>
+            <td>${badge}</td>
+            <td><button class="btn-sm btn-paid" onclick="window.renewStore('${s.id}')">Ödədi + 1 ay ✓</button></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>`);
+}
+
+window.toggleStore=async function(id,aktiv){
+  await sb.from('magazalar').update({aktiv:!aktiv}).eq('id',id);
+  toast(aktiv?'Mağaza blok edildi':'Mağaza aktiv edildi','ok');
+  if(aPage==='dash')loadAdminDash();else loadAdminStores();
+}
+
+window.renewStore=async function(id){
+  const{data}=await sb.from('magazalar').select('abune_bitis').eq('id',id).single();
+  const base=data?.abune_bitis&&new Date(data.abune_bitis)>new Date()?new Date(data.abune_bitis):new Date();
+  base.setMonth(base.getMonth()+1);
+  await sb.from('magazalar').update({abune_bitis:base.toISOString().split('T')[0],aktiv:true}).eq('id',id);
+  toast('Abunə 1 ay uzadıldı','ok');
+  loadAdminAbune();
+}
+
+window.saveMagaza=async function(){
+  const ad=document.getElementById('mm-ad').value.trim();
+  const email=document.getElementById('mm-email').value.trim().toLowerCase();
+  const sifre=document.getElementById('mm-sifre').value;
+  const plan=document.getElementById('mm-plan').value;
+  const tarix=document.getElementById('mm-tarix').value||null;
+  if(!ad||!email||sifre.length<6){toast('Ad, email və min 6 simvol şifrə lazımdır!','err');return;}
+  const btn=document.getElementById('mm-save');
+  btn.disabled=true;btn.textContent='Yaradılır...';
+  const{error:dbErr}=await sb.from('magazalar').insert({ad,email,plan,aktiv:true,abune_bitis:tarix});
+  btn.disabled=false;btn.textContent='Əlavə et';
+  if(dbErr){toast('Xəta: '+dbErr.message,'err');return;}
+  toast(`${ad} əlavə edildi! Supabase-də Auth user yaradın: ${email}/${sifre}`,'ok');
+  closeM('m-magaza');
+  ['mm-ad','mm-email','mm-sifre','mm-tarix'].forEach(i=>document.getElementById(i).value='');
+  loadAdminDash();
+}
+
+window.openM=function(id){document.getElementById(id).classList.add('open');}
+window.closeM=function(id){document.getElementById(id).classList.remove('open');}
+function openM(id){document.getElementById(id).classList.add('open');}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function setC(id,html){document.getElementById(id).innerHTML=html;}
+
+function toast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=(type==='ok'?'✓ ':type==='err'?'✗ ':'')+msg;
+  t.className=`toast show t-${type||'info'}`;
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
+});
+</script>
+</body>
+</html>
