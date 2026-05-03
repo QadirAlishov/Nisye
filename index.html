@@ -855,6 +855,18 @@ function toast(msg,type){
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
 });
+
+// Hər 10 dəqiqədə session yenilə
+setInterval(async()=>{
+  if(user){await sb.auth.refreshSession();}
+},10*60*1000);
+
+// Səhifə yenidən fokusa gələndə session yoxla
+document.addEventListener('visibilitychange',async()=>{
+  if(document.visibilityState==='visible'&&user){
+    await sb.auth.refreshSession();
+  }
+});
 </script>
 </body>
 </html>
