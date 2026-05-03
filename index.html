@@ -19,7 +19,7 @@
   --shadow-md:0 4px 16px rgba(0,0,0,.08);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:15px;min-height:100vh}
 .hidden{display:none!important}
 .lw{min-height:100vh;display:flex;align-items:center;justify-content:center}
 .lcard{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2.25rem;width:380px;box-shadow:var(--shadow-md)}
@@ -56,12 +56,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .nsep{height:1px;background:var(--border);margin:7px 1rem}
 .content{padding:1.75rem;background:var(--bg)}
 .ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px}
-.pt{font-size:20px;font-weight:700}
+.pt{font-size:22px;font-weight:700}
 .ps{font-size:12px;color:var(--text3);margin-top:3px}
 .sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1rem 1.25rem;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .stat-line{position:absolute;top:0;left:0;right:0;height:3px}
-.sv{font-size:26px;font-weight:700;font-family:'DM Mono',monospace;margin-bottom:3px;line-height:1}
+.sv{font-size:30px;font-weight:700;font-family:'DM Mono',monospace;margin-bottom:3px;line-height:1}
 .sl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:1.25rem;box-shadow:var(--shadow)}
 .ch{padding:.875rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
@@ -72,7 +72,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .search-inp:focus{border-color:var(--accent)}
 table{width:100%;border-collapse:collapse}
 th{text-align:left;font-size:11px;color:var(--text3);padding:9px 14px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.06em;font-weight:600;background:var(--surface2)}
-td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);vertical-align:middle}
+td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:14px;color:var(--text2);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#FAFAF8}
 td strong{color:var(--text);font-weight:600}
@@ -205,6 +205,7 @@ td strong{color:var(--text);font-weight:600}
 <div class="layout">
   <div class="sidebar">
     <div class="ni on" onclick="window.sNav(this,'panel')"><span class="ni-ic">◈</span>Nisiyə paneli</div>
+    <div class="ni" onclick="window.sNav(this,'hesabat')"><span class="ni-ic">📊</span>Hesabat</div>
     <div class="nsep"></div>
     <div class="ni" style="opacity:.35;cursor:default"><span class="ni-ic">⚙</span>Hesab</div>
   </div>
@@ -388,7 +389,8 @@ function sBadge(r){
 window.sNav=function(el,page){
   document.querySelectorAll('#pg-store .ni').forEach(n=>n.classList.remove('on'));
   el.classList.add('on');sPage=page;
-  renderStore();
+  if(page==='panel')renderStore();
+  else if(page==='hesabat')renderHesabat();
 }
 
 function renderStore(){
@@ -618,6 +620,73 @@ window.delBorc=async function(id){
   if(error){toast('Xəta','err');return;}
   toast('Qeyd silindi','info');
   await loadNisiye();
+}
+
+function renderHesabat(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const aktiv=nisiye.filter(r=>calcStatus(r)!=='paid');
+  const paid=nisiye.filter(r=>calcStatus(r)==='paid');
+  const gecik=aktiv.filter(r=>calcStatus(r)==='late');
+  const toplam=aktiv.reduce((s,r)=>s+qaliq(r),0);
+  const toplanmis=paid.reduce((s,r)=>s+r.borc,0);
+  const umumi=nisiye.reduce((s,r)=>s+r.borc,0);
+  const odSx=nisiye.length?Math.round(paid.length/nisiye.length*100):0;
+  const top5=[...aktiv].sort((a,b)=>qaliq(b)-qaliq(a)).slice(0,5);
+
+  setC('s-content',`
+    <div class="ph">
+      <div><p class="pt">Hesabat</p><p class="ps">${magaza.ad} · Ümumi statistika</p></div>
+      <button class="btn btn-primary" onclick="window.exportCSV()">📥 CSV yüklə</button>
+    </div>
+    <div class="sgrid">
+      <div class="stat"><div class="stat-line" style="background:var(--accent)"></div><p class="sv">${nisiye.length}</p><p class="sl">Ümumi müştəri</p></div>
+      <div class="stat"><div class="stat-line" style="background:var(--red)"></div><p class="sv" style="color:var(--red)">${toplam} ₼</p><p class="sl">Qalıq borc</p></div>
+      <div class="stat"><div class="stat-line" style="background:var(--green)"></div><p class="sv" style="color:var(--green)">${toplanmis} ₼</p><p class="sl">Ödənilmiş (ümumi)</p></div>
+      <div class="stat"><div class="stat-line" style="background:var(--accent)"></div><p class="sv">${odSx}%</p><p class="sl">Ödəniş faizi</p></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.25rem">
+      <div class="card">
+        <div class="ch"><span class="ct">🏆 Ən çox borclu (Top 5)</span></div>
+        <table>
+          <thead><tr><th>#</th><th>Ad soyad</th><th>Qalıq borc</th><th>Status</th></tr></thead>
+          <tbody>${top5.length?top5.map((r,i)=>`<tr>
+            <td><strong>#${i+1}</strong></td>
+            <td><strong>${r.ad}</strong></td>
+            <td style="font-family:'DM Mono',monospace;color:var(--red);font-weight:600">${qaliq(r)} ₼</td>
+            <td>${sBadge(r)}</td>
+          </tr>`).join(''):'<tr><td colspan="4" class="empty-td">Borclu yoxdur</td></tr>'}</tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="ct">⚠️ Gecikmiş borcular</span></div>
+        <table>
+          <thead><tr><th>Ad soyad</th><th>Qalıq</th><th>Gün gecikib</th></tr></thead>
+          <tbody>${gecik.length?gecik.map(r=>{
+            const diff=Math.abs(Math.round((new Date(r.tarix)-today)/864e5));
+            return `<tr>
+              <td><strong>${r.ad}</strong></td>
+              <td style="font-family:'DM Mono',monospace;color:var(--red)">${qaliq(r)} ₼</td>
+              <td><span class="badge b-red">${diff} gün</span></td>
+            </tr>`;
+          }).join(''):'<tr><td colspan="3" class="empty-td">Gecikmiş yoxdur 🎉</td></tr>'}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct">📋 Bütün müştərilər</span></div>
+      <table>
+        <thead><tr><th>Ad soyad</th><th>Nömrə</th><th>Ümumi borc</th><th>Ödənilib</th><th>Qalıq</th><th>Son tarix</th><th>Status</th></tr></thead>
+        <tbody>${nisiye.length?nisiye.map(r=>`<tr>
+          <td><strong>${r.ad}</strong>${r.qeyd?`<span style="font-size:11px;color:var(--text3);display:block">${r.qeyd}</span>`:''}</td>
+          <td style="font-family:'DM Mono',monospace;font-size:12px">+${r.nomre}</td>
+          <td style="font-family:'DM Mono',monospace">${r.borc} ₼</td>
+          <td style="font-family:'DM Mono',monospace;color:var(--green)">${r.odenilen||0} ₼</td>
+          <td style="font-family:'DM Mono',monospace;font-weight:600;color:${calcStatus(r)==='paid'?'var(--green)':'var(--red)'}">${qaliq(r)} ₼</td>
+          <td style="font-family:'DM Mono',monospace;font-size:12px">${fmtDate(r.tarix)}</td>
+          <td>${sBadge(r)}</td>
+        </tr>`).join(''):'<tr><td colspan="7" class="empty-td">Heç bir qeyd yoxdur</td></tr>'}</tbody>
+      </table>
+    </div>`);
 }
 
 window.aNav=function(el,page){
